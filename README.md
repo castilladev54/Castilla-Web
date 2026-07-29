@@ -18,13 +18,39 @@ El sistema proporciona una experiencia interactiva fluida (UX), modo oscuro adap
 
 ## 📐 Arquitectura y Ecosistema de Frontend
 
+El proyecto está construido sobre un stack moderno y reactivo utilizando **React 19** con **TypeScript**, **Vite** como bundler, **Tailwind CSS v4** para el diseño de interfaces, y **Zustand v5** para el manejo del estado global.
+
 La aplicación cliente se estructura siguiendo el principio de **Diseño Atómico (Atomic Design)** para maximizar la reutilización de componentes y facilitar el mantenimiento de la interfaz:
 
-- **Punto de Entrada**: [main.jsx](file:///c:/Users/Consultorio/Documents/proyectosCarlos/Dashboard-React-Tailwindcss/frontend/src/main.jsx) inicializa la renderización del entorno React 19.
-- **Ruteador Core**: [App.jsx](file:///c:/Users/Consultorio/Documents/proyectosCarlos/Dashboard-React-Tailwindcss/frontend/src/App.jsx) define el sistema de enrutamiento principal con `react-router-dom` v7, integrando wrappers de protección y control de suscripción activa.
-- **Dashboard Central**: [DashboardPage.jsx](file:///c:/Users/Consultorio/Documents/proyectosCarlos/Dashboard-React-Tailwindcss/frontend/src/pages/DashboardPage.jsx) actúa como contenedor modular principal. Renderiza pestañas condicionales basadas en permisos y provee acceso al chatbot de IA.
-- **Menú de Navegación**: [Sidebar.jsx](file:///c:/Users/Consultorio/Documents/proyectosCarlos/Dashboard-React-Tailwindcss/frontend/src/components/Sidebar.jsx) maneja la barra lateral responsiva, los menús colapsables y el selector de tema (Modo Claro / Modo Oscuro).
-- **Landing Page**: [HomePage.jsx](file:///c:/Users/Consultorio/Documents/proyectosCarlos/Dashboard-React-Tailwindcss/frontend/src/pages/HomePage.jsx) funciona como portal de ventas inicial para captar nuevos registros de negocios.
+### Estructura de Directorios (`src/`)
+
+```text
+src/
+├── assets/         # Recursos estáticos (imágenes, iconos locales)
+├── components/     # Componentes de React
+│   ├── atoms/      # Componentes UI básicos (ej. Button)
+│   ├── molecules/  # Componentes compuestos
+│   ├── organisms/  # Secciones complejas (ej. AiChatWindow)
+│   ├── pos/        # Componentes específicos del Punto de Venta
+│   └── *.{jsx,tsx} # Gestores principales (ProductManager, SalesManager, etc.)
+├── constants/      # Variables constantes de la aplicación
+├── hooks/          # Custom React hooks
+├── pages/          # Vistas principales (enrutables)
+├── store/          # Archivos de Zustand para el estado global
+├── styles/         # Estilos adicionales / utilidades
+├── utils/          # Funciones de ayuda (formateadores, fechas)
+├── App.tsx         # Componente raíz y configuración de Rutas
+└── main.tsx        # Punto de entrada de React
+```
+
+### Componentes Core
+
+- **Punto de Entrada**: `main.tsx` inicializa la renderización del entorno React 19.
+- **Ruteador Core**: `App.tsx` define el sistema de enrutamiento principal con `react-router-dom` v7. Utiliza wrappers de seguridad como `<ProtectedRoute>` y `<RedirectAuthenticatedUser>` para proteger rutas, además de integrar validación de suscripción activa.
+- **Guardias de Permisos**: `<PermissionGuard>` envuelve componentes específicos del sistema para restringir el acceso basado en los roles (ej. `inventory_access`, `pos_access`, `finances_access`).
+- **Dashboard Central**: `DashboardPage.tsx` actúa como contenedor modular principal. Renderiza pestañas condicionales basadas en los permisos del usuario y provee acceso al chatbot de IA.
+- **Menú de Navegación**: `Sidebar.jsx` maneja la barra lateral responsiva, los menús colapsables y el selector de tema (Modo Claro / Modo Oscuro).
+- **Landing Page**: `HomePage.tsx` funciona como portal de ventas inicial para captar nuevos registros de negocios.
 
 ---
 
@@ -76,7 +102,7 @@ Controladores de Ruta (API REST)
 ```
 
 > [!IMPORTANT]
-> **Subscription Expired Lock**: El interceptor global de Axios valida el estado de la suscripción. Si ha expirado, redirige de inmediato a [SubscriptionExpiredPage.jsx](file:///c:/Users/Consultorio/Documents/proyectosCarlos/Dashboard-React-Tailwindcss/frontend/src/pages/SubscriptionExpiredPage.jsx) impidiendo cualquier operación. El backend respalda esto bloqueando peticiones con un código de respuesta `403 Forbidden` si la fecha de expiración ha pasado.
+> **Subscription Expired Lock**: El interceptor global de Axios valida el estado de la suscripción. Si ha expirado, redirige de inmediato a [SubscriptionExpiredPage.tsx](file:///c:/Users/Consultorio/Documents/proyectosCarlos/Dashboard-React-Tailwindcss/frontend/src/pages/SubscriptionExpiredPage.tsx) impidiendo cualquier operación. El backend respalda esto bloqueando peticiones con un código de respuesta `403 Forbidden` si la fecha de expiración ha pasado.
 
 ---
 
@@ -110,24 +136,24 @@ Toda modificación que afecte a múltiples colecciones se realiza dentro de tran
 ## 📊 Módulos Clave del Sistema
 
 ### 1. Punto de Venta (TPV/POS)
-El componente principal [SalesManager.jsx](file:///c:/Users/Consultorio/Documents/proyectosCarlos/Dashboard-React-Tailwindcss/frontend/src/components/SalesManager.jsx) gestiona toda la facturación:
-- **Carrito Deslizante**: El componente [CartDrawer.jsx](file:///c:/Users/Consultorio/Documents/proyectosCarlos/Dashboard-React-Tailwindcss/frontend/src/components/pos/CartDrawer.jsx) permite visualizar artículos en el carrito, actualizar cantidades (admite enteros y fracciones para productos pesados/medidos a granel, ej. `1.5 kg`) y procesar cobros.
-- **Teclado POS Acelerado**: El custom hook [usePOSKeyboard.js](file:///c:/Users/Consultorio/Documents/proyectosCarlos/Dashboard-React-Tailwindcss/frontend/src/hooks/usePOSKeyboard.js) define atajos rápidos (detallados en [HelpModal.jsx](file:///c:/Users/Consultorio/Documents/proyectosCarlos/Dashboard-React-Tailwindcss/frontend/src/components/pos/HelpModal.jsx)).
-- **Filtros Históricos**: [useSalesFilters.js](file:///c:/Users/Consultorio/Documents/proyectosCarlos/Dashboard-React-Tailwindcss/frontend/src/hooks/useSalesFilters.js) provee filtros por vendedor, método de pago y rangos de fechas.
+El componente principal [SalesManager.tsx](file:///c:/Users/Consultorio/Documents/proyectosCarlos/Dashboard-React-Tailwindcss/frontend/src/components/SalesManager.tsx) gestiona toda la facturación:
+- **Carrito Deslizante**: El componente [CartDrawer.tsx](file:///c:/Users/Consultorio/Documents/proyectosCarlos/Dashboard-React-Tailwindcss/frontend/src/components/pos/CartDrawer.tsx) permite visualizar artículos en el carrito, actualizar cantidades (admite enteros y fracciones para productos pesados/medidos a granel, ej. `1.5 kg`) y procesar cobros.
+- **Teclado POS Acelerado**: El custom hook [usePOSKeyboard.ts](file:///c:/Users/Consultorio/Documents/proyectosCarlos/Dashboard-React-Tailwindcss/frontend/src/hooks/usePOSKeyboard.ts) define atajos rápidos (detallados en [HelpModal.tsx](file:///c:/Users/Consultorio/Documents/proyectosCarlos/Dashboard-React-Tailwindcss/frontend/src/components/pos/HelpModal.tsx)).
+- **Filtros Históricos**: [useSalesFilters.ts](file:///c:/Users/Consultorio/Documents/proyectosCarlos/Dashboard-React-Tailwindcss/frontend/src/hooks/useSalesFilters.ts) provee filtros por vendedor, método de pago y rangos de fechas.
 
 ### 2. Gestión de Inventarios y Categorías
-- **Control de Productos**: El componente [ProductManager.jsx](file:///c:/Users/Consultorio/Documents/proyectosCarlos/Dashboard-React-Tailwindcss/frontend/src/components/ProductManager.jsx) permite registrar artículos asignando tipos de unidad (`kg`, `litro`, `metro`, `unidad`).
+- **Control de Productos**: El componente [ProductManager.tsx](file:///c:/Users/Consultorio/Documents/proyectosCarlos/Dashboard-React-Tailwindcss/frontend/src/components/ProductManager.tsx) permite registrar artículos asignando tipos de unidad (`kg`, `litro`, `metro`, `unidad`).
 - **Auditoría de Ajuste**: Cuando se modifica físicamente el stock, el sistema requiere de forma obligatoria seleccionar un motivo (mermas, robos, vencimientos, corrección de inventario) que se registra en el Kardex.
-- **Categorías Taxonómicas**: Controladas desde [CategoryManager.jsx](file:///c:/Users/Consultorio/Documents/proyectosCarlos/Dashboard-React-Tailwindcss/frontend/src/components/CategoryManager.jsx). El backend impide borrar una categoría si tiene productos asociados.
+- **Categorías Taxonómicas**: Controladas desde [CategoryManager.tsx](file:///c:/Users/Consultorio/Documents/proyectosCarlos/Dashboard-React-Tailwindcss/frontend/src/components/CategoryManager.tsx). El backend impide borrar una categoría si tiene productos asociados.
 
 ### 3. Registro de Compras y Cuentas por Pagar (Supplier Manager)
-Control integral de los ingresos de inventario administrado por [PurchaseManager.jsx](file:///c:/Users/Consultorio/Documents/proyectosCarlos/Dashboard-React-Tailwindcss/frontend/src/components/PurchaseManager.jsx):
+Control integral de los ingresos de inventario administrado por [PurchaseManager.tsx](file:///c:/Users/Consultorio/Documents/proyectosCarlos/Dashboard-React-Tailwindcss/frontend/src/components/PurchaseManager.tsx):
 - **Cuentas por Pagar**: Controla estados de deuda con proveedores (`Pagado`, `Vencida`, `Parcial`, `Pendiente`).
 - **Abonos Parciales**: Permite ir saldando facturas de compras paulatinamente mediante registro de pagos en USD.
 - **Cronograma de Vencimientos**: Alertas automáticas para facturas con vencimientos próximos (rango de 7 días).
 
 ### 4. Copiloto de Inteligencia Artificial (E2E)
-El módulo [AiChatWindow.jsx](file:///c:/Users/Consultorio/Documents/proyectosCarlos/Dashboard-React-Tailwindcss/frontend/src/components/organisms/AiChatWindow.jsx) ofrece una herramienta de análisis gerencial en tiempo real:
+El módulo [AiChatWindow.tsx](file:///c:/Users/Consultorio/Documents/proyectosCarlos/Dashboard-React-Tailwindcss/frontend/src/components/organisms/AiChatWindow.tsx) ofrece una herramienta de análisis gerencial en tiempo real:
 - **Respuestas por Streaming (SSE)**: Utiliza `Server-Sent Events` para recibir y renderizar la respuesta del bot en tiempo real, palabra por palabra, mediante la API de streams.
 - **Extracción de Contexto en Paralelo**: Al hacer una pregunta, el backend ejecuta consultas asíncronas en paralelo (con un timeout máximo de 8 segundos y caché en Redis de 3 minutos) para recopilar:
   - Stock crítico (menos de 5 unidades).
@@ -139,18 +165,18 @@ El módulo [AiChatWindow.jsx](file:///c:/Users/Consultorio/Documents/proyectosCa
 - **System Prompt v2**: Prioriza alertas de deudas/stock crítico, estructura la respuesta en un máximo de 200 palabras utilizando markdown y sugiere siempre una acción ejecutable y concreta.
 
 ### 5. Tasa de Cambio Multidivisa (USD / VES)
-El componente [ExchangeRateBar.jsx](file:///c:/Users/Consultorio/Documents/proyectosCarlos/Dashboard-React-Tailwindcss/frontend/src/components/pos/ExchangeRateBar.jsx) se conecta al [currencyStore.js](file:///c:/Users/Consultorio/Documents/proyectosCarlos/Dashboard-React-Tailwindcss/frontend/src/store/currencyStore.js) para obtener la tasa del día:
+El componente [ExchangeRateBar.tsx](file:///c:/Users/Consultorio/Documents/proyectosCarlos/Dashboard-React-Tailwindcss/frontend/src/components/pos/ExchangeRateBar.tsx) se conecta al [currencyStore.ts](file:///c:/Users/Consultorio/Documents/proyectosCarlos/Dashboard-React-Tailwindcss/frontend/src/store/currencyStore.ts) para obtener la tasa del día:
 - **Tasa Única Diaria**: El backend implementa un índice compuesto único `{ customer_id: 1, date: 1 }` en el modelo `ExchangeRate`, garantizando una sola tasa registrada por negocio al día.
 - **Timezone VE**: Se calcula el inicio del día en huso horario de Venezuela (UTC-4) para registrar la tasa antes de persistir en MongoDB.
 - **Totales Duales**: Permite al POS mostrar subtotales, impuestos y totales convertidos instantáneamente entre USD y Bolívares (VES).
 
 ### 6. Control de Personal y Desempeño
-La pestaña controlada por [StaffManager.jsx](file:///c:/Users/Consultorio/Documents/proyectosCarlos/Dashboard-React-Tailwindcss/frontend/src/components/StaffManager.jsx) maneja al equipo:
+La pestaña controlada por [StaffManager.tsx](file:///c:/Users/Consultorio/Documents/proyectosCarlos/Dashboard-React-Tailwindcss/frontend/src/components/StaffManager.tsx) maneja al equipo:
 - **Edición de Permisos**: Habilita o deshabilita accesos sobre la marcha (`pos_access`, `inventory_access`, etc.).
 - **Analíticas de Rendimiento (`salesStats`)**: El backend calcula de manera agregada mediante consultas de base de datos la cantidad de transacciones cerradas y el monto acumulado en USD facturado por cada cajero.
 
 ### 7. Analíticas de Ganancia Neta
-Representado en [AnalyticsManager.jsx](file:///c:/Users/Consultorio/Documents/proyectosCarlos/Dashboard-React-Tailwindcss/frontend/src/components/AnalyticsManager.jsx):
+Representado en [AnalyticsManager.tsx](file:///c:/Users/Consultorio/Documents/proyectosCarlos/Dashboard-React-Tailwindcss/frontend/src/components/AnalyticsManager.tsx):
 - **Gráficas Comparativas**: `Recharts` muestra la curva diaria de ingresos vs costos operativos (Compras).
 - **Flujo de Caja**: Gráfico de barras interactivo con colorimetría condicional (naranja para rentabilidad positiva, rojo para pérdidas).
 
@@ -186,13 +212,13 @@ El sistema soporta dos modalidades de escaneo simultáneas:
 
 El estado asincrónico del frontend se descentraliza en múltiples almacenes ligeros con persistencia selectiva:
 
-- **[authStore.js](file:///c:/Users/Consultorio/Documents/proyectosCarlos/Dashboard-React-Tailwindcss/frontend/src/store/authStore.js)**: Control de usuario, token de verificación, creación administrativa y purga dura de almacenamiento local al cerrar sesión.
+- **[authStore.ts](file:///c:/Users/Consultorio/Documents/proyectosCarlos/Dashboard-React-Tailwindcss/frontend/src/store/authStore.ts)**: Control de usuario, token de verificación, creación administrativa y purga dura de almacenamiento local al cerrar sesión.
 - **[productStore.js](file:///c:/Users/Consultorio/Documents/proyectosCarlos/Dashboard-React-Tailwindcss/frontend/src/store/productStore.js)**: CRUD de productos, filtrados avanzados y obtención por código de barras.
 - **[categoryStore.js](file:///c:/Users/Consultorio/Documents/proyectosCarlos/Dashboard-React-Tailwindcss/frontend/src/store/categoryStore.js)**: Gestión taxonómica.
 - **[purchaseStore.js](file:///c:/Users/Consultorio/Documents/proyectosCarlos/Dashboard-React-Tailwindcss/frontend/src/store/purchaseStore.js)**: Transacciones con proveedores y pagos de deuda.
 - **[saleStore.js](file:///c:/Users/Consultorio/Documents/proyectosCarlos/Dashboard-React-Tailwindcss/frontend/src/store/saleStore.js)**: Control de ventas, anulaciones y recargas de stock asociadas.
 - **[staffStore.js](file:///c:/Users/Consultorio/Documents/proyectosCarlos/Dashboard-React-Tailwindcss/frontend/src/store/staffStore.js)**: Gestión de cajeros, asignación de permisos y estadísticas.
-- **[currencyStore.js](file:///c:/Users/Consultorio/Documents/proyectosCarlos/Dashboard-React-Tailwindcss/frontend/src/store/currencyStore.js)**: Sincronización y persistencia local de tasa cambiaria diaria (Bs/USD).
+- **[currencyStore.ts](file:///c:/Users/Consultorio/Documents/proyectosCarlos/Dashboard-React-Tailwindcss/frontend/src/store/currencyStore.ts)**: Sincronización y persistencia local de tasa cambiaria diaria (Bs/USD).
 
 ---
 
@@ -280,3 +306,23 @@ proyectosCarlos/
    npm run dev
    ```
    *El frontend estará disponible en `http://localhost:5173` y se comunicará automáticamente con la API en el puerto `5000` enviando credenciales y cookies correspondientes.*
+
+---
+
+## 🌐 Despliegue en Producción (Vercel)
+
+El frontend está optimizado para su despliegue en entornos Serverless como **Vercel**. 
+El repositorio incluye un archivo `vercel.json` en su raíz que asegura el correcto funcionamiento del enrutamiento del lado del cliente (Single Page Application) redirigiendo de manera nativa todas las peticiones a `index.html`:
+
+```json
+{
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
+```
+
+El cliente Axios está configurado en todo el proyecto para interceptar respuestas y adjuntar cookies automáticamente (`withCredentials: true`), lo que permite que la sesión sea administrada de forma segura mediante JWT en cookies `HttpOnly` emitidas por el Backend.
